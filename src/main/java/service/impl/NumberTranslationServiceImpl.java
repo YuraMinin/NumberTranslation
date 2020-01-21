@@ -23,6 +23,19 @@ public class NumberTranslationServiceImpl implements NumberTranslationService {
         ReadDictionary();
     }
 
+
+    // Singleton
+    private static NumberTranslationServiceImpl numberTranslationServiceInstance;
+
+    public static NumberTranslationServiceImpl getInstance() {
+        if (numberTranslationServiceInstance == null) {
+            numberTranslationServiceInstance = new NumberTranslationServiceImpl();
+        }
+
+        return numberTranslationServiceInstance;
+    }
+
+
     // Чтение словоря из файла
     private void ReadDictionary() {
 
@@ -40,7 +53,6 @@ public class NumberTranslationServiceImpl implements NumberTranslationService {
     // Разбиение числа
     public String NumberTranslate(double num)   {
 
-
         String numText;
 
         // Проверка число на допустимость
@@ -52,23 +64,23 @@ public class NumberTranslationServiceImpl implements NumberTranslationService {
 
         } else if (num < 0) {
             numText = "минус ";
+            num = Math.abs(num);
 
         } else {
             numText = "";
         }
 
 
-        // сумма переведенных в текстовую форму чисел
+        // сумма переведенных в текстовую форму чисел после разбиения
         double number = 0;
 
-        // Номер столбца в матрице степеней числа 0, 1, 2 ...
+        // Номер столбца в матрице степеней числа degreesNumbers[...][indexNumber];
         int indexNumber = 0;
 
         for (int i = (countNumberSplitting - 1)*3; i >= 0; i -= 3) {
 
             // Если число больше 1000 => разбиваем
             if (Math.pow(10, i) != (double) 1) {
-
 
                 double translateNumber =  (num - number) / Math.pow(10, i);
                 int integerNumber = (int) translateNumber;
@@ -103,30 +115,57 @@ public class NumberTranslationServiceImpl implements NumberTranslationService {
 
         if (decimals == 1) {
             // Если десятки меньше 20 но больше 9
-            numText = unitsToHundredsNumbers[2][hundreds] + numbers11To19.get(units);
+            if (hundreds > 0) {
+                numText = unitsToHundredsNumbers[2][hundreds] + " " + numbers11To19.get(units);
+            } else {
+                numText = numbers11To19.get(units);
+            }
 
         } else {
-            numText = unitsToHundredsNumbers[2][hundreds]
-                    + unitsToHundredsNumbers[1][decimals]
-                    + unitsToHundredsNumbers[0][units];
+
+            if (hundreds > 0 ) {
+
+                if (decimals > 0 || units > 0 ) {
+                numText += unitsToHundredsNumbers[2][hundreds] + " ";
+
+                } else if (decimals == 0 && units  == 0){
+                    numText += unitsToHundredsNumbers[2][hundreds];
+
+                }
+            }
+
+            if (decimals > 0) {
+                if (units > 0) {
+                    numText += unitsToHundredsNumbers[1][decimals] + " ";
+                } else {
+                    numText += unitsToHundredsNumbers[1][decimals];
+                }
+            }
+
+            if (units > 0) {
+                numText += unitsToHundredsNumbers[0][units];
+            }
 
         }
 
-
-
         // формируем окончания в единицах в тысячах
         if (countNumberSplitting - numberColDegrees == 2) {
-            if (units == 1 && decimals != 1) numText = numText + "на";
-            else if (units == 2 & decimals != 1) numText = numText + "е";
-            if (units > 1 && decimals != 1) numText = numText + "";
+            if (units == 1 && decimals != 1) {
+                numText = numText + "на";
 
+            } else if (units == 2 & decimals != 1) {
+                numText = numText + "е";
+
+            }
         } else {
-
             // в других степенях
-            if (units == 1 && decimals != 1) numText = numText + "ин";
-            if (units == 2 & decimals != 1) {
+            if (units == 1 && decimals != 1) {
+                numText = numText + "ин";
+
+            } else if (units == 2 & decimals != 1) {
                 numText = numText + "а";
-            } else if (units != 0 & decimals != 1) numText = numText + "";
+
+            }
         }
 
         // формируем степень числа
@@ -142,11 +181,8 @@ public class NumberTranslationServiceImpl implements NumberTranslationService {
                 numberRowDegrees = 1;
             } else if (units < 5) {
                 numberRowDegrees = 2;
+            }
 
-            }
-            else {
-                numberRowDegrees = 0;
-            }
         } else {
             return numText;
         }

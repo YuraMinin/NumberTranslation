@@ -8,7 +8,7 @@ public class numberTranslation {
 
     public static void main(String[] args) {
 
-        NumberTranslationService numberTranslationService = new NumberTranslationServiceImpl();
+        NumberTranslationService numberTranslationService = NumberTranslationServiceImpl.getInstance();
 
 
         while (true) {
@@ -26,7 +26,5 @@ public class numberTranslation {
             }
 
         }
-
     }
-
 }
