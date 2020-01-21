@@ -5,6 +5,7 @@ import service.impl.NumberTranslationServiceImpl;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,10 +22,10 @@ public class DataDrivenTest {
 
         NumberTranslationService numberTranslationService = NumberTranslationServiceImpl.getInstance();
 
-        int zero = 0;
-        System.out.println(zero + " = " + numberTranslationService.NumberTranslate(zero));
 
-        assertEquals("ноль", numberTranslationService.NumberTranslate(zero));
+        System.out.println(0 + " = " + numberTranslationService.NumberTranslate(new BigInteger("0")));
+
+        assertEquals("ноль", numberTranslationService.NumberTranslate(new BigInteger("0")));
     }
 
 
@@ -40,9 +41,9 @@ public class DataDrivenTest {
                 "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"};
 
         for (int i = 1; i < 20; i++) {
-            System.out.println(i + " = " + numberTranslationService.NumberTranslate(i));
+            System.out.println(i + " = " + numberTranslationService.NumberTranslate(BigInteger.valueOf(i)));
             assertEquals(NumberText[i - 1],
-                    numberTranslationService.NumberTranslate(i));
+                    numberTranslationService.NumberTranslate(BigInteger.valueOf(i)));
 
         }
     }
@@ -55,7 +56,7 @@ public class DataDrivenTest {
 
         String line;
         List<String> numberText = new ArrayList<String>();
-        List<Double> number = new ArrayList<Double>();
+        List<Long> number = new ArrayList<Long>();
         int iterator = 0;
 
         try (BufferedReader reader = new BufferedReader(new FileReader("./src/test/resources/TestNumbers.txt"));) {
@@ -65,7 +66,7 @@ public class DataDrivenTest {
                     numberText.add(line);
                     iterator++;
                 } else {
-                    number.add(Double.parseDouble(line));
+                    number.add(Long.parseLong(line));
                     iterator++;
                 }
             }
@@ -76,7 +77,7 @@ public class DataDrivenTest {
 
         for (int i = 0; i < iterator / 2; i++) {
             System.out.println(number.get(i).intValue() + " = " + numberText.get(i));
-            assertEquals(numberText.get(i), numberTranslationService.NumberTranslate(number.get(i)));
+           assertEquals(numberText.get(i), numberTranslationService.NumberTranslate(BigInteger.valueOf(number.get(i))));
         }
     }
 }

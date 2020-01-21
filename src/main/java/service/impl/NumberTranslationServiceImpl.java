@@ -3,6 +3,7 @@ package service.impl;
 import service.NumberTranslationService;
 import service.ReadingDictionaryService;
 
+import java.math.BigInteger;
 import java.util.List;
 
 public class NumberTranslationServiceImpl implements NumberTranslationService {
@@ -16,7 +17,7 @@ public class NumberTranslationServiceImpl implements NumberTranslationService {
     private int countNumberSplitting;
 
     // Максимальный диапазон чисел;
-    private double numberMax;
+    private BigInteger numberMax;
 
 
     public NumberTranslationServiceImpl(){
@@ -46,25 +47,26 @@ public class NumberTranslationServiceImpl implements NumberTranslationService {
         unitsToHundredsNumbers = dictionaryService.readingNumbersUnitsToHundreds();
 
         countNumberSplitting = degreesNumbers[0].length;
-        numberMax = (long) Math.pow(10, 3*countNumberSplitting);
 
+        numberMax = new BigInteger("10");
+        numberMax = numberMax.pow(3*countNumberSplitting + 1);
     }
 
     // Разбиение числа
-    public String NumberTranslate(double num)   {
+    public String NumberTranslate(BigInteger num)   {
 
         String numText;
 
         // Проверка число на допустимость
-        if (num < -numberMax || num > numberMax) {
+        if (num.compareTo(numberMax) == 1 || num.compareTo(numberMax.divide(BigInteger.valueOf(-1))) == -1) {
             return numText = "Число выходит за диапазон (дополните словарь degreesNumbers.txt)";
 
-        } else if (num == 0) {
+        } else if (num.compareTo(new BigInteger("0")) == 0 ) {
             return numText = "ноль";
 
-        } else if (num < 0) {
+        } else if (num.compareTo(new BigInteger("0")) == -1) {
             numText = "минус ";
-            num = Math.abs(num);
+            num = num.abs();
 
         } else {
             numText = "";
@@ -72,7 +74,7 @@ public class NumberTranslationServiceImpl implements NumberTranslationService {
 
 
         // сумма переведенных в текстовую форму чисел после разбиения
-        double number = 0;
+        BigInteger number = new BigInteger("0");
 
         // Номер столбца в матрице степеней числа degreesNumbers[...][indexNumber];
         int indexNumber = 0;
@@ -82,15 +84,16 @@ public class NumberTranslationServiceImpl implements NumberTranslationService {
             // Если число больше 1000 => разбиваем
             if (Math.pow(10, i) != (double) 1) {
 
-                double translateNumber =  (num - number) / Math.pow(10, i);
-                int integerNumber = (int) translateNumber;
+                BigInteger translateNumber =  num;
+                translateNumber = translateNumber.subtract(number);
+                translateNumber = translateNumber.divide(new BigInteger("10").pow(i));
 
-                number += integerNumber * Math.pow(10, i);
-                numText += NumberPartTranslate(integerNumber, indexNumber);
+                number = number.add(translateNumber.multiply(new BigInteger("10").pow(i)));
+                numText += NumberPartTranslate(translateNumber.intValue(), indexNumber);
 
             } else {
-                double translateNumber = (num % 1000);
-                numText += NumberPartTranslate((int) translateNumber, indexNumber);
+                BigInteger translateNumber = num.mod(new BigInteger("1000"));
+                numText += NumberPartTranslate(translateNumber.intValue(), indexNumber);
             }
 
             indexNumber++;

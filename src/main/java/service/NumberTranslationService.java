@@ -1,8 +1,9 @@
 package service;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
 public interface NumberTranslationService {
 
-    String NumberTranslate(double num);
+    String NumberTranslate(BigInteger num);
 }
