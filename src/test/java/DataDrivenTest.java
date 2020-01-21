@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DataDrivenTest {
 
     @Test
-    public void testGetNameZero() {
+    public void testGetNameNumberZero() {
 
         System.out.println("Test 1, Number 0");
 
@@ -29,15 +29,15 @@ public class DataDrivenTest {
 
 
     @Test
-    public void testGetNameUnit() {
+    public void testGetNameNumber11To19() {
 
         System.out.println("Test 2, Numbers 1 - 19");
 
         NumberTranslationService numberTranslationService = NumberTranslationServiceImpl.getInstance();
 
-        String[] NumberText = new String[]{"один", "два", "три", "четыре",
-                "пять", "шесть", "семь", "восемь", "девять", "десять", "одиннадцать", "двенадцать", "тринадцать",
-                "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"};
+        String[] NumberText = new String[]{"один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь",
+                "девять", "десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать",
+                "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"};
 
         for (int i = 1; i < 20; i++) {
             System.out.println(i + " = " + numberTranslationService.NumberTranslate(i));
@@ -73,7 +73,6 @@ public class DataDrivenTest {
         } catch (IOException e) {
             System.out.println("Ошибка в чтении файла: TestNumbers.txt");
         }
-
 
         for (int i = 0; i < iterator / 2; i++) {
             System.out.println(number.get(i).intValue() + " = " + numberText.get(i));
